@@ -1,0 +1,36 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import EpisodeCard from "../components/EpisodeCard.astro";
+import HeroSection from "../components/HeroSection.astro";
+import PodcastMetaSections from "../components/PodcastMetaSections.astro";
+import { getPodcastData } from "../lib/podcast";
+
+type EpisodeText = {
+  eyebrow: string;
+  title: string;
+  defaultDescription: string;
+  openEpisodeLabel: string;
+  audioFallback: string;
+  comingSoonTitle: string;
+  comingSoonDescription: string;
+};
+
+const [episodeEntry] = await Astro.glob("../content/episode.md");
+
+const { latestEpisode, podcastTitle } = await getPodcastData();
+
+const episodeText = episodeEntry.frontmatter as EpisodeText;
+
+const pageTitle = "Podcasten om Odense Bulldogs";
+const pageDescription =
+  "Dansk podcast om Odense Bulldogs med aktuelle kampe, begivenheder og historiske profiler.";
+---
+
+<MainLayout title={pageTitle} description={pageDescription}>
+  <main class="page-shell">
+    <HeroSection podcastTitle={podcastTitle} />
+
+    <EpisodeCard episode={latestEpisode} text={episodeText} />
+    <PodcastMetaSections />
+  </main>
+</MainLayout>

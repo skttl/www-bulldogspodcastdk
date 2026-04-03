@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src",
+    "astro.config.mjs"
+  ]
+}

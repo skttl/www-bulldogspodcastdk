@@ -1,0 +1,30 @@
+---
+import SubscribeLinks from './SubscribeLinks.astro';
+
+type AboutText = {
+  eyebrow: string;
+  title: string;
+};
+
+type SubscribeText = {
+  eyebrow: string;
+  title: string;
+};
+
+const [aboutEntry] = await Astro.glob('../content/about.md');
+const [subscribeEntry] = await Astro.glob('../content/subscribe.md');
+
+const about = aboutEntry.frontmatter as AboutText;
+const subscribeText = subscribeEntry.frontmatter as SubscribeText;
+const AboutBody = aboutEntry.Content;
+---
+
+<SubscribeLinks text={subscribeText} />
+
+<section class="card" id="om-podcasten">
+  <div class="section-header">
+    <p class="eyebrow">{about.eyebrow}</p>
+    <h2>{about.title}</h2>
+  </div>
+  <AboutBody />
+</section>

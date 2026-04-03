@@ -1,0 +1,45 @@
+---
+type Props = {
+  text: {
+    eyebrow: string;
+    title: string;
+  };
+};
+
+const { text } = Astro.props;
+
+const rssUrl =
+  import.meta.env.PODCAST_RSS_URL ?? "https://feeds.buzzsprout.com/2388927.rss";
+
+const links = [
+  {
+    name: "Spotify",
+    href: `https://open.spotify.com/show/7o2bSTep8BtGl1hqZmpcuW`,
+  },
+  {
+    name: "Apple Podcasts",
+    href: `https://podcasts.apple.com/uz/podcast/bulldogs-podcast/id1761028331`,
+  },
+  { name: "Pocket Casts", href: `https://pca.st/7vg4xnrm` },
+  { name: "RSS Feed", href: rssUrl },
+];
+---
+
+<section class="card" id="abonner">
+  <div class="section-header">
+    <p class="eyebrow">{text.eyebrow}</p>
+    <h2>{text.title}</h2>
+  </div>
+
+  <ul class="subscribe-list">
+    {
+      links.map((link) => (
+        <li>
+          <a href={link.href} target="_blank" rel="noreferrer">
+            {link.name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

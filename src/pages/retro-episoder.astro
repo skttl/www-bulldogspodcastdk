@@ -1,0 +1,106 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import EpisodeOverview from "../components/EpisodeOverview.astro";
+import HeroSection from "../components/HeroSection.astro";
+import PodcastMetaSections from "../components/PodcastMetaSections.astro";
+import { getPodcastFeedData, type Episode } from "../lib/podcast";
+import retroEpisodes from "../data/retro-episodes.json";
+
+type RetroText = {
+  title: string;
+  description: string;
+  pageDescription: string;
+};
+
+const [retroEntry] = await Astro.glob("../content/retro.md");
+const retroText = retroEntry.frontmatter as RetroText;
+
+const retroEpisodeIds = retroEpisodes as number[];
+
+const { podcastTitle, episodes } = await getPodcastFeedData();
+
+const extractEpisodeId = (value: string): string | null => {
+  const match = value.match(/\/episodes\/(\d+)(?:-|\/|$)/i);
+  return match ? match[1] : null;
+};
+
+const episodeById = new Map<string, Episode>();
+
+for (const episode of episodes) {
+  if (episode.episodeId) {
+    episodeById.set(episode.episodeId, episode);
+  }
+
+  if (episode.rssGuid?.startsWith("Buzzsprout-")) {
+    const guidId = episode.rssGuid.replace(/^Buzzsprout-/i, "");
+    episodeById.set(guidId, episode);
+  }
+
+  const episodeId = extractEpisodeId(episode.link);
+
+  if (episodeId) {
+    episodeById.set(episodeId, episode);
+  }
+}
+
+const retroEpisodeCards: Episode[] = retroEpisodeIds.map((retroEpisodeId) => {
+  const retroId = String(retroEpisodeId);
+  const match = episodeById.get(retroId);
+
+  if (match) {
+    return match;
+  }
+
+  return {
+    title: `Retro episode ${retroId}`,
+    link: `https://www.buzzsprout.com/2388927/episodes/${retroId}`,
+    publishedAt: "",
+    description: "",
+    audioUrl: null,
+    imageUrl: null,
+    rssGuid: `Buzzsprout-${retroId}`,
+    episodeId: retroId,
+  };
+});
+
+retroEpisodeCards.sort((a, b) => {
+  const aTime = a.publishedAt ? Date.parse(a.publishedAt) : Number.NaN;
+  const bTime = b.publishedAt ? Date.parse(b.publishedAt) : Number.NaN;
+
+  const aValid = Number.isFinite(aTime);
+  const bValid = Number.isFinite(bTime);
+
+  if (aValid && bValid) {
+    return bTime - aTime;
+  }
+
+  if (aValid) {
+    return -1;
+  }
+
+  if (bValid) {
+    return 1;
+  }
+
+  return 0;
+});
+
+const pageTitle = `${retroText.title} | ${podcastTitle}`;
+const pageDescription = retroText.pageDescription;
+---
+
+<MainLayout title={pageTitle} description={pageDescription}>
+  <main class="page-shell">
+    <HeroSection podcastTitle={podcastTitle} />
+
+    <EpisodeOverview
+      title={retroText.title}
+      description={retroText.description}
+      episodes={retroEpisodeCards}
+      currentPage={1}
+      totalPages={1}
+    />
+
+    <PodcastMetaSections />
+  </main>
+</MainLayout>

@@ -1,0 +1,41 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import EpisodeOverview from "../../components/EpisodeOverview.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import PodcastMetaSections from "../../components/PodcastMetaSections.astro";
+import { getPodcastFeedData } from "../../lib/podcast";
+
+type EpisodesText = {
+  title: string;
+  overviewDescription: string;
+  pageDescription: string;
+  pagedPageDescription: string;
+};
+
+const [episodesEntry] = await Astro.glob("../../content/episodes.md");
+const episodesText = episodesEntry.frontmatter as EpisodesText;
+
+const EPISODES_PER_PAGE = 10;
+const { podcastTitle, episodes } = await getPodcastFeedData();
+
+const pageTitle = `${episodesText.title} | ${podcastTitle}`;
+const pageDescription = episodesText.pageDescription;
+const pageEpisodes = episodes.slice(0, EPISODES_PER_PAGE);
+const totalPages = Math.max(1, Math.ceil(episodes.length / EPISODES_PER_PAGE));
+---
+
+<MainLayout title={pageTitle} description={pageDescription}>
+  <main class="page-shell">
+    <HeroSection podcastTitle={podcastTitle} />
+
+    <EpisodeOverview
+      title={episodesText.title}
+      description={episodesText.overviewDescription}
+      episodes={pageEpisodes}
+      currentPage={1}
+      totalPages={totalPages}
+    />
+
+    <PodcastMetaSections />
+  </main>
+</MainLayout>

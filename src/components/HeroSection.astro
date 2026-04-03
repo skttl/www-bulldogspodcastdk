@@ -1,0 +1,59 @@
+---
+type HeroText = {
+  eyebrow: string;
+  facebookLabel: string;
+  facebookUrl: string;
+};
+
+type Props = {
+  podcastTitle: string;
+};
+
+const { podcastTitle } = Astro.props as Props;
+
+const [heroEntry] = await Astro.glob("../content/hero.md");
+const hero = heroEntry.frontmatter as HeroText;
+const HeroBody = heroEntry.Content;
+const pathname = Astro.url.pathname;
+
+const isEpisodesPage =
+  pathname === "/episoder" || pathname.startsWith("/episoder/");
+const isRetroPage =
+  pathname === "/retro-episoder" || pathname.startsWith("/retro-episoder/");
+---
+
+<header class="hero card">
+  <div class="hero-layout">
+    <div class="hero-main">
+      <p class="eyebrow">{hero.eyebrow}</p>
+      <h1><a href="/">{podcastTitle}</a></h1>
+      <div class="hero-copy">
+        <HeroBody />
+      </div>
+      <div class="hero-actions">
+        <a class:list={{ ghost: true, active: isEpisodesPage }} href="/episoder"
+          >Alle episoder</a
+        >
+        <a
+          class:list={{ ghost: true, active: isRetroPage }}
+          href="/retro-episoder">Retro episoder</a
+        >
+        <a
+          class="ghost"
+          href={hero.facebookUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {hero.facebookLabel}
+        </a>
+      </div>
+    </div>
+
+    <img
+      class="hero-logo"
+      src="/images/logo.jpg"
+      alt="Bulldogs Podcast logo"
+      loading="lazy"
+    />
+  </div>
+</header>

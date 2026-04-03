@@ -1,0 +1,106 @@
+---
+import type { Episode } from "../lib/podcast";
+
+type Props = {
+  episode: Episode | null;
+  text: {
+    eyebrow: string;
+    title: string;
+    defaultDescription: string;
+    openEpisodeLabel: string;
+    audioFallback: string;
+    comingSoonTitle: string;
+    comingSoonDescription: string;
+  };
+};
+
+const { episode, text } = Astro.props;
+
+const SHOWNOTES_MARKER =
+  "Kære lytter. Hvis du klikker lige her, kan du skrive en kommentar til podcasten.";
+const MUSIC_MARKER = "MUSIKKENDING:";
+
+const sanitizeDescription = (value: string) => {
+  const lower = value.toLowerCase();
+  const markerIndex = lower.indexOf(SHOWNOTES_MARKER.toLowerCase());
+  const musicIndex = lower.indexOf(MUSIC_MARKER.toLowerCase());
+
+  const cutoffCandidates = [markerIndex, musicIndex].filter(
+    (index) => index >= 0,
+  );
+
+  const cutoff =
+    cutoffCandidates.length > 0 ? Math.min(...cutoffCandidates) : -1;
+
+  const cleaned = cutoff >= 0 ? value.slice(0, cutoff) : value;
+  return cleaned.trim();
+};
+
+const dateFormatter = new Intl.DateTimeFormat("da-DK", {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+});
+
+const formattedDate = episode?.publishedAt
+  ? dateFormatter.format(new Date(episode.publishedAt))
+  : null;
+
+const shouldShowOpenEpisodeButton =
+  !!episode && !episode.audioUrl && episode.link !== "#";
+---
+
+<section class="card" id="seneste-episode">
+  <div class="section-header">
+    <p class="eyebrow">{text.eyebrow}</p>
+    <h2>{text.title}</h2>
+  </div>
+
+  {
+    episode ? (
+      <article class="episode">
+        <div class="episode-split">
+          <div class="episode-content">
+            {formattedDate && <p class="episode-date">{formattedDate}</p>}
+            <h3>{episode.title}</h3>
+            <p>
+              {sanitizeDescription(episode.description) ||
+                text.defaultDescription}
+            </p>
+            <div class="episode-actions">
+              {shouldShowOpenEpisodeButton && (
+                <a
+                  class="button"
+                  href={episode.link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {text.openEpisodeLabel}
+                </a>
+              )}
+              {episode.audioUrl && (
+                <audio controls src={episode.audioUrl} preload="none">
+                  {text.audioFallback}
+                </audio>
+              )}
+            </div>
+          </div>
+
+          {episode.imageUrl && (
+            <img
+              class="episode-cover latest-episode-cover"
+              src={episode.imageUrl}
+              alt={`Cover for ${episode.title}`}
+              loading="lazy"
+            />
+          )}
+        </div>
+      </article>
+    ) : (
+      <article class="episode">
+        <h3>{text.comingSoonTitle}</h3>
+        <p>{text.comingSoonDescription}</p>
+      </article>
+    )
+  }
+</section>

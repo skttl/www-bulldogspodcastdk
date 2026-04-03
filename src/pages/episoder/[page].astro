@@ -1,0 +1,67 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import EpisodeOverview from "../../components/EpisodeOverview.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import PodcastMetaSections from "../../components/PodcastMetaSections.astro";
+import { getPodcastFeedData, type Episode } from "../../lib/podcast";
+
+type EpisodesText = {
+  title: string;
+  overviewDescription: string;
+  pageDescription: string;
+  pagedPageDescription: string;
+};
+
+const [episodesEntry] = await Astro.glob("../../content/episodes.md");
+const episodesText = episodesEntry.frontmatter as EpisodesText;
+
+type PageProps = {
+  episodes: Episode[];
+  currentPage: number;
+  totalPages: number;
+  podcastTitle: string;
+};
+
+export async function getStaticPaths() {
+  const episodesPerPage = 10;
+  const { episodes, podcastTitle } = await getPodcastFeedData();
+  const totalPages = Math.max(1, Math.ceil(episodes.length / episodesPerPage));
+
+  return Array.from({ length: totalPages }, (_, index) => {
+    const page = index + 1;
+    const start = index * episodesPerPage;
+
+    return {
+      params: { page: String(page) },
+      props: {
+        episodes: episodes.slice(start, start + episodesPerPage),
+        currentPage: page,
+        totalPages,
+        podcastTitle,
+      },
+    };
+  }).filter((entry) => entry.params.page !== "1");
+}
+
+const { episodes, currentPage, totalPages, podcastTitle } =
+  Astro.props as PageProps;
+
+const pageTitle = `${episodesText.title} (side ${currentPage}) | ${podcastTitle}`;
+const pageDescription = `${episodesText.pagedPageDescription} (side ${currentPage}).`;
+---
+
+<MainLayout title={pageTitle} description={pageDescription}>
+  <main class="page-shell">
+    <HeroSection podcastTitle={podcastTitle} />
+
+    <EpisodeOverview
+      title={episodesText.title}
+      description={episodesText.overviewDescription}
+      episodes={episodes}
+      currentPage={currentPage}
+      totalPages={totalPages}
+    />
+
+    <PodcastMetaSections />
+  </main>
+</MainLayout>

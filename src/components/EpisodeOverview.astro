@@ -1,0 +1,132 @@
+---
+import type { Episode } from "../lib/podcast";
+
+type Props = {
+  title: string;
+  description: string;
+  episodes: Episode[];
+  currentPage: number;
+  totalPages: number;
+};
+
+const shouldShowOpenEpisodeButton = (episode: Episode) =>
+  !episode.audioUrl && episode.link !== "#";
+
+const { title, description, episodes, currentPage, totalPages } = Astro.props;
+
+const SHOWNOTES_MARKER =
+  "Kære lytter. Hvis du klikker lige her, kan du skrive en kommentar til podcasten.";
+const MUSIC_MARKER = "MUSIKKENDING:";
+
+const sanitizeDescription = (value: string) => {
+  const lower = value.toLowerCase();
+  const markerIndex = lower.indexOf(SHOWNOTES_MARKER.toLowerCase());
+  const musicIndex = lower.indexOf(MUSIC_MARKER.toLowerCase());
+
+  const cutoffCandidates = [markerIndex, musicIndex].filter(
+    (index) => index >= 0,
+  );
+
+  const cutoff =
+    cutoffCandidates.length > 0 ? Math.min(...cutoffCandidates) : -1;
+
+  const cleaned = cutoff >= 0 ? value.slice(0, cutoff) : value;
+  return cleaned.trim();
+};
+
+const dateFormatter = new Intl.DateTimeFormat("da-DK", {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+});
+
+const pageUrl = (page: number) =>
+  page <= 1 ? "/episoder" : `/episoder/${page}`;
+---
+
+<section class="card">
+  <div class="section-header">
+    <p class="eyebrow">Episode oversigt</p>
+    <h1>{title}</h1>
+  </div>
+  <p class="section-intro">{description}</p>
+
+  {
+    episodes.length > 0 ? (
+      <ul class="episode-list">
+        {episodes.map((episode) => (
+          <li class="episode-list-item episode">
+            <div class="episode-split">
+              <div class="episode-content">
+                <p class="episode-date">
+                  {episode.publishedAt
+                    ? dateFormatter.format(new Date(episode.publishedAt))
+                    : "Ukendt dato"}
+                </p>
+                <h2>{episode.title}</h2>
+                <p>
+                  {sanitizeDescription(episode.description) ||
+                    "Ingen beskrivelse tilgængelig."}
+                </p>
+                <div class="episode-actions">
+                  {shouldShowOpenEpisodeButton(episode) && (
+                    <a
+                      class="button"
+                      href={episode.link}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Åbn episode
+                    </a>
+                  )}
+                  {episode.audioUrl && (
+                    <audio controls src={episode.audioUrl} preload="none">
+                      Din browser understøtter ikke afspilning.
+                    </audio>
+                  )}
+                </div>
+              </div>
+
+              {episode.imageUrl && (
+                <img
+                  class="episode-cover"
+                  src={episode.imageUrl}
+                  alt={`Cover for ${episode.title}`}
+                  loading="lazy"
+                />
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>Ingen episoder fundet.</p>
+    )
+  }
+
+  {
+    totalPages > 1 && (
+      <nav class="pagination" aria-label="Sideinddeling af episoder">
+        <a
+          class:list={{ ghost: true, disabled: currentPage === 1 }}
+          href={currentPage === 1 ? undefined : pageUrl(currentPage - 1)}
+        >
+          Forrige
+        </a>
+
+        <p>
+          Side {currentPage} af {totalPages}
+        </p>
+
+        <a
+          class:list={{ ghost: true, disabled: currentPage === totalPages }}
+          href={
+            currentPage === totalPages ? undefined : pageUrl(currentPage + 1)
+          }
+        >
+          Næste
+        </a>
+      </nav>
+    )
+  }
+</section>

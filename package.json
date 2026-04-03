@@ -1,0 +1,22 @@
+{
+  "name": "bulldogspodcast",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@fontsource/bebas-neue": "^5.2.6",
+    "@fontsource/montserrat": "^5.2.6",
+    "astro": "^5.8.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
