@@ -43,6 +43,12 @@ const ogImageUrl = new URL(image, Astro.site ?? Astro.url.origin).toString();
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+
+    <style>
+      @view-transition {
+        navigation: auto;
+      }
+    </style>
   </head>
   <body>
     <slot />
