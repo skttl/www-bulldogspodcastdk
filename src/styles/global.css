@@ -243,9 +243,6 @@ audio {
   max-width: 100%;
   display: block;
   accent-color: var(--brand);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface);
 }
 
 @media (prefers-color-scheme: dark) {
