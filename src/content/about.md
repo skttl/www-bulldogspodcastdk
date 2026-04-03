@@ -6,4 +6,4 @@ Podcasten om Odense Bulldogs går tæt på klubbens hverdag og historie. Her få
 
 Målet er at samle fans, nysgerrige lyttere og klubfolk i et fælles lydunivers med passion for ishockey i Odense.
 
-Send gerne ris, ros eller forslag til episoder til vores <a href="https://www.facebook.com/p/Podcasten-om-Odense-Bulldogs-61560701590683/">facebook-side</a> eller mail <a href="mailto:bulldogspodcast@gmail.com">bulldogspodcast@gmail.com</a>
+Send gerne ris, ros eller forslag til episoder til vores <a href="https://www.facebook.com/p/Podcasten-om-Odense-Bulldogs-61560701590683/">facebook-side</a> eller mail <a href="mailto:bulldogspod@gmail.com">bulldogspod@gmail.com</a>
