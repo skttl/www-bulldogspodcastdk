@@ -15,7 +15,7 @@ type EpisodesText = {
 const [episodesEntry] = await Astro.glob("../../content/episodes.md");
 const episodesText = episodesEntry.frontmatter as EpisodesText;
 
-const EPISODES_PER_PAGE = 10;
+const EPISODES_PER_PAGE = 5;
 const { podcastTitle, episodes } = await getPodcastFeedData();
 
 const pageTitle = `${episodesText.title} | ${podcastTitle}`;

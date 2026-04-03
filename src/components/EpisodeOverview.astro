@@ -41,7 +41,7 @@ const dateFormatter = new Intl.DateTimeFormat("da-DK", {
 });
 
 const pageUrl = (page: number) =>
-  page <= 1 ? "/episoder" : `/episoder/${page}`;
+  page <= 1 ? "/episoder/" : `/episoder/${page}/`;
 ---
 
 <section class="card">

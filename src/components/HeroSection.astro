@@ -17,9 +17,9 @@ const HeroBody = heroEntry.Content;
 const pathname = Astro.url.pathname;
 
 const isEpisodesPage =
-  pathname === "/episoder" || pathname.startsWith("/episoder/");
+  pathname === "/episoder/" || pathname.startsWith("/episoder/");
 const isRetroPage =
-  pathname === "/retro-episoder" || pathname.startsWith("/retro-episoder/");
+  pathname === "/retro-episoder/" || pathname.startsWith("/retro-episoder/");
 ---
 
 <header class="hero card">
@@ -31,12 +31,13 @@ const isRetroPage =
         <HeroBody />
       </div>
       <div class="hero-actions">
-        <a class:list={{ ghost: true, active: isEpisodesPage }} href="/episoder"
-          >Alle episoder</a
+        <a
+          class:list={{ ghost: true, active: isEpisodesPage }}
+          href="/episoder/">Alle episoder</a
         >
         <a
           class:list={{ ghost: true, active: isRetroPage }}
-          href="/retro-episoder">Retro episoder</a
+          href="/retro-episoder/">Retro episoder</a
         >
         <a
           class="ghost"
